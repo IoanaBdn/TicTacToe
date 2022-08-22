@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { StyleSheet, Text, View, ImageBackground } from "react-native";
+import { StyleSheet, Text, View, ImageBackground, Pressable } from "react-native";
 import bg from "./assets/bg.jpeg";
 
 export default function App() {
@@ -9,14 +9,29 @@ export default function App() {
     ["", "x", "x"], //2nd row
     ["o", "", ""], //3rd row
   ]);
+  const onPress = (rowIndex, columnIndex) =>{
+
+    if(map[rowIndex][columnIndex]!==""){
+      Alert.alert("Position already occupied");
+      return;
+    }
+
+    setMap((existingMap)=>{
+      const updatedArray= [...existingMap];
+      updatedArray[rowIndex][columnIndex] ='o';
+      return updatedArray;
+    });
+
+  }
+   
   return (
     <View style={styles.container}>
       <ImageBackground source={bg} style={styles.bg} resizeMode="contain">
         <View style={styles.map}>
-          {map.map((row) => (
+          {map.map((row, rowIndex) => (
             <View style={styles.row}>
-              {row.map((cell) => (
-                <View style={styles.cell}>
+              {row.map((cell, columnIndex) => (
+                <Pressable style={styles.cell} onPress={()=>onPress(rowIndex, columnIndex)}>
                   {cell === "o" && <View style={styles.circle} />}
                   {cell === "x" && (
                     <View style={styles.cross}>
@@ -26,7 +41,7 @@ export default function App() {
                       />
                     </View>
                   )}
-                </View>
+                </Pressable>
               ))}
             </View>
           ))}
