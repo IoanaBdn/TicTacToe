@@ -1,18 +1,43 @@
 import { StatusBar } from "expo-status-bar";
+import React, { useState } from "react";
 import { StyleSheet, Text, View, ImageBackground } from "react-native";
 import bg from "./assets/bg.jpeg";
 
 export default function App() {
+  const [map, setMap] = useState([
+    ["o", "", ""], //1st row
+    ["", "x", "x"], //2nd row
+    ["o", "", ""], //3rd row
+  ]);
   return (
     <View style={styles.container}>
       <ImageBackground source={bg} style={styles.bg} resizeMode="contain">
         <View style={styles.map}>
-          <View style={styles.circle} />
+          {map.map((row) => (
+            <View style={styles.row}>
+              {row.map((cell) => (
+                <View style={styles.cell}>
+                  {cell === "o" && <View style={styles.circle} />}
+                  {cell === "x" && (
+                    <View style={styles.cross}>
+                      <View style={styles.crossLine} />
+                      <View
+                        style={[styles.crossLine, styles.crossLineReversed]}
+                      />
+                    </View>
+                  )}
+                </View>
+              ))}
+            </View>
+          ))}
 
+          {/*
+          <View style={styles.circle} />
           <View style={styles.cross}>
             <View style={styles.crossLine} />
             <View style={[styles.crossLine, styles.crossLineReversed]} />
           </View>
+      */}
         </View>
       </ImageBackground>
       <StatusBar style="auto" />
@@ -36,16 +61,24 @@ const styles = StyleSheet.create({
 
     paddingTop: 15,
   },
-  map:{
-    borderWidth:1,
-    borderColor:'white',
-    width:'80%',
-    aspectRatio:1
+  map: {
+    width: "80%",
+    aspectRatio: 1,
+  },
+  row: {
+    flex: 1,
+    flexDirection: "row",
+  },
+  cell: {
+    width: 100,
+    height: 100,
+    flex: 1,
+    borderColor: "white",
+    borderWidth: 1,
   },
   circle: {
-    position: "absolute",
-    left:2*105,
-    top:2*105,
+    left: 0 * 105,
+    top: 0 * 105,
     width: 75,
     height: 75,
     borderRadius: 50,
@@ -55,17 +88,15 @@ const styles = StyleSheet.create({
     borderWidth: 10,
     borderColor: "white",
   },
-  cross:{
-    position: "absolute",
-    width: 75,
-    height: 75,
+  cross: {
+   flex:1
   },
 
   crossLine: {
     position: "absolute",
-    left:32.5,
+    left: '48%',
     width: 10,
-    height: 70,
+    height: "100%",
     backgroundColor: "white",
     borderRadius: 5,
     transform: [
