@@ -1,29 +1,39 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { StyleSheet, Text, View, ImageBackground, Pressable } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ImageBackground,
+  Pressable,
+  Alert,
+} from "react-native";
 import bg from "./assets/bg.jpeg";
 
 export default function App() {
   const [map, setMap] = useState([
-    ["o", "", ""], //1st row
-    ["", "x", "x"], //2nd row
-    ["o", "", ""], //3rd row
+    ["", "", ""], //1st row
+    ["", "", ""], //2nd row
+    ["", "", ""], //3rd row
   ]);
-  const onPress = (rowIndex, columnIndex) =>{
 
-    if(map[rowIndex][columnIndex]!==""){
+  const [currentTurn, setCurrentTurn] = useState("x");
+
+  const onPress = (rowIndex, columnIndex) => {
+    if (map[rowIndex][columnIndex] !== "") {
       Alert.alert("Position already occupied");
       return;
     }
 
-    setMap((existingMap)=>{
-      const updatedArray= [...existingMap];
-      updatedArray[rowIndex][columnIndex] ='o';
-      return updatedArray;
+    setMap((existingMap) => {
+      const updatedMap = [...existingMap];
+      updatedMap[rowIndex][columnIndex] = currentTurn;
+      return updatedMap;
     });
 
-  }
-   
+    setCurrentTurn(currentTurn === "x" ? "o" : "x");
+  };
+
   return (
     <View style={styles.container}>
       <ImageBackground source={bg} style={styles.bg} resizeMode="contain">
@@ -31,7 +41,10 @@ export default function App() {
           {map.map((row, rowIndex) => (
             <View style={styles.row}>
               {row.map((cell, columnIndex) => (
-                <Pressable style={styles.cell} onPress={()=>onPress(rowIndex, columnIndex)}>
+                <Pressable
+                  style={styles.cell}
+                  onPress={() => onPress(rowIndex, columnIndex)}
+                >
                   {cell === "o" && <View style={styles.circle} />}
                   {cell === "x" && (
                     <View style={styles.cross}>
@@ -88,28 +101,25 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     flex: 1,
-    borderColor: "white",
-    borderWidth: 1,
   },
   circle: {
-    left: 0 * 105,
-    top: 0 * 105,
-    width: 75,
-    height: 75,
+    flex: 1,
+    flex: 1,
     borderRadius: 50,
     alignItems: "center",
     justifyContent: "center",
     margin: 10,
+
     borderWidth: 10,
     borderColor: "white",
   },
   cross: {
-   flex:1
+    flex: 1,
   },
 
   crossLine: {
     position: "absolute",
-    left: '48%',
+    left: "48%",
     width: 10,
     height: "100%",
     backgroundColor: "white",
