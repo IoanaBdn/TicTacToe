@@ -32,6 +32,84 @@ export default function App() {
     });
 
     setCurrentTurn(currentTurn === "x" ? "o" : "x");
+    checkWinningState();
+  };
+
+  const checkWinningState = () => {
+    //Check rows
+    for (let i = 0; i < 3; i++) {
+      const isRowXWinning = map[i].every((cell) => cell === "x");
+      const isRowOWinning = map[i].every((cell) => cell === "o");
+
+      if (isRowXWinning) {
+        Alert.alert(`X won. Row: ${i}`);
+      }
+      if (isRowOWinning) {
+        Alert.alert(`O won. Row: ${i}`);
+      }
+    }
+
+    //Check columns
+    for (let col = 0; col < 3; col++) {
+      let isColumnXWinner = true;
+      let isColumnOWinner = true;
+
+      for (let row = 0; row < 3; row++) {
+        if(map[row][col]!=='x'){
+          isColumnXWinner = false;
+        }
+        if(map[row][col]!=='0'){
+          isColumnOWinner = false;
+        }
+      }
+
+      if (isColumnXWinner) {
+        Alert.alert(`X won. Col: ${col}`);
+      }
+      if (isColumnOWinner) {
+        Alert.alert(`O won. Col: ${col}`);
+
+      }
+    }
+
+    //Check diagonals
+    let isDiagonal1OWinning = true;
+    let isDiagonal2OWinning = true;
+    let isDiagonal1XWinning = true;
+    let isDiagonal2XWinning = true;
+
+    
+    for(let i=0;i<3;i++){
+      if(map[i][i]!=='o'){
+        isDiagonal1OWinning=false;
+      }
+      if(map[i][i]!=='x'){
+        isDiagonal1XWinning=false;
+      }
+
+      if(map[i][2-i]!=='o'){
+        isDiagonal2OWinning=false;
+      }
+      if(map[i][2-i]!=='x'){
+        isDiagonal2XWinning=false;
+      }
+
+      if (isDiagonal1OWinning) {
+        Alert.alert(`O won. Diagonal 1`);
+      }
+      if (isDiagonal2XWinning) {
+        Alert.alert(`X won. Diagonal 1`);
+      }
+
+      if (isDiagonal2OWinning) {
+        Alert.alert(`O won. Diagonal 2`);
+      }
+      if (isDiagonal2XWinning) {
+        Alert.alert(`X won. Diagonal 2`);
+      }
+
+
+    }
   };
 
   return (
@@ -39,9 +117,10 @@ export default function App() {
       <ImageBackground source={bg} style={styles.bg} resizeMode="contain">
         <View style={styles.map}>
           {map.map((row, rowIndex) => (
-            <View style={styles.row}>
+            <View key={`row-${rowIndex}`} style={styles.row}>
               {row.map((cell, columnIndex) => (
                 <Pressable
+                  key={`row-${rowIndex}-col-${columnIndex}`}
                   style={styles.cell}
                   onPress={() => onPress(rowIndex, columnIndex)}
                 >
