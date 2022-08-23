@@ -34,20 +34,26 @@ export default function App() {
     });
 
     setCurrentTurn(currentTurn === "x" ? "o" : "x");
-    checkWinningState();
+    const winner = getWinner();
+    if(winner){
+      gameWon(winner)
+    }
+    else{
+      checkTieState();
+    }
   };
 
-  const checkWinningState = () => {
+  const getWinner = () => {
     //Check rows
     for (let i = 0; i < 3; i++) {
       const isRowXWinning = map[i].every((cell) => cell === "x");
       const isRowOWinning = map[i].every((cell) => cell === "o");
 
       if (isRowXWinning) {
-        gameWon('x');
+        return "x";
       }
       if (isRowOWinning) {
-        gameWon('0');
+        return "0";
       }
     }
 
@@ -57,19 +63,19 @@ export default function App() {
       let isColumnOWinner = true;
 
       for (let row = 0; row < 3; row++) {
-        if(map[row][col]!=='x'){
+        if (map[row][col] !== "x") {
           isColumnXWinner = false;
         }
-        if(map[row][col]!=='0'){
+        if (map[row][col] !== "0") {
           isColumnOWinner = false;
         }
       }
 
       if (isColumnXWinner) {
-        gameWon('x');
+        return "x";
       }
       if (isColumnOWinner) {
-        gameWon('o');
+        return "o";
       }
     }
 
@@ -79,33 +85,39 @@ export default function App() {
     let isDiagonal2OWinning = true;
     let isDiagonal2XWinning = true;
 
-    
-    for(let i=0;i<3;i++){
-      if(map[i][i]!=='o'){
-        isDiagonal1OWinning=false;
+    for (let i = 0; i < 3; i++) {
+      if (map[i][i] !== "o") {
+        isDiagonal1OWinning = false;
       }
-      if(map[i][i]!=='x'){
-        isDiagonal1XWinning=false;
-      }
-
-      if(map[i][2-i]!=='o'){
-        isDiagonal2OWinning=false;
-      }
-      if(map[i][2-i]!=='x'){
-        isDiagonal2XWinning=false;
+      if (map[i][i] !== "x") {
+        isDiagonal1XWinning = false;
       }
 
+      if (map[i][2 - i] !== "o") {
+        isDiagonal2OWinning = false;
+      }
+      if (map[i][2 - i] !== "x") {
+        isDiagonal2XWinning = false;
+      }
     }
     if (isDiagonal1OWinning || isDiagonal2OWinning) {
-      gameWon('0');
-
+      return "0";
     }
     if (isDiagonal1XWinning || isDiagonal2XWinning) {
-      gameWon('x');
+      return "x";
     }
-
   };
 
+  const checkTieState = () => {
+    if (!map.some((row) => row.some((cell) => cell === ""))) {
+      Alert.alert(`It's a tie`, `tie`, [
+        {
+          text: "Restart",
+          onPress: resetGame,
+        },
+      ]);
+    }
+  };
 
   const gameWon = (player) => {
     Alert.alert(`Huraaaayyy`, `Player ${player} won`, [
@@ -118,8 +130,8 @@ export default function App() {
 
   const resetGame = () => {
     setMap(emptyMap);
-    setCurrentTurn('x');
-  }
+    setCurrentTurn("x");
+  };
 
   return (
     <View style={styles.container}>
