@@ -9,6 +9,7 @@ import {
   Alert,
 } from "react-native";
 import bg from "./assets/bg.jpeg";
+import Cell from "./src/components/Cell";
 
 const emptyMap = [
   ["", "", ""], // 1st row
@@ -142,32 +143,14 @@ export default function App() {
           {map.map((row, rowIndex) => (
             <View key={`row-${rowIndex}`} style={styles.row}>
               {row.map((cell, columnIndex) => (
-                <Pressable
+                <Cell
                   key={`row-${rowIndex}-col-${columnIndex}`}
-                  style={styles.cell}
+                  cell={cell}
                   onPress={() => onPress(rowIndex, columnIndex)}
-                >
-                  {cell === "o" && <View style={styles.circle} />}
-                  {cell === "x" && (
-                    <View style={styles.cross}>
-                      <View style={styles.crossLine} />
-                      <View
-                        style={[styles.crossLine, styles.crossLineReversed]}
-                      />
-                    </View>
-                  )}
-                </Pressable>
+                />
               ))}
             </View>
           ))}
-
-          {/*
-          <View style={styles.circle} />
-          <View style={styles.cross}>
-            <View style={styles.crossLine} />
-            <View style={[styles.crossLine, styles.crossLineReversed]} />
-          </View>
-      */}
         </View>
       </ImageBackground>
       <StatusBar style="auto" />
@@ -205,43 +188,17 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
   },
-  cell: {
-    width: 100,
-    height: 100,
-    flex: 1,
-  },
-  circle: {
-    flex: 1,
-    flex: 1,
-    borderRadius: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    margin: 10,
-
-    borderWidth: 10,
-    borderColor: "white",
-  },
-  cross: {
-    flex: 1,
-  },
-  crossLine: {
+  buttons: {
     position: "absolute",
-    left: "48%",
-    width: 10,
-    height: "100%",
-    backgroundColor: "white",
-    borderRadius: 5,
-    transform: [
-      {
-        rotate: "45deg",
-      },
-    ],
+    bottom: 50,
+    flexDirection: "row",
   },
-  crossLineReversed: {
-    transform: [
-      {
-        rotate: "-45deg",
-      },
-    ],
+  button: {
+    color: "white",
+    margin: 10,
+    fontSize: 16,
+    backgroundColor: "#191F24",
+    padding: 10,
+    paddingHorizontal: 15,
   },
 });
