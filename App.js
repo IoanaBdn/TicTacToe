@@ -1,13 +1,6 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  ImageBackground,
-  Pressable,
-  Alert,
-} from "react-native";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, Text, View, ImageBackground, Alert } from "react-native";
 import bg from "./assets/bg.jpeg";
 import Cell from "./src/components/Cell";
 
@@ -17,10 +10,34 @@ const emptyMap = [
   ["", "", ""], // 3rd row
 ];
 
+const copyArray = (original) => {
+  const copy = original.map((arr) => {
+    return arr.slice();
+  });
+  return copy;
+};
+
 export default function App() {
   const [map, setMap] = useState(emptyMap);
 
   const [currentTurn, setCurrentTurn] = useState("x");
+
+  useEffect(() => {
+    if (currentTurn === "o") {
+      botTurn();
+    }
+  }, [currentTurn]);
+
+
+
+  useEffect(() => {
+    const winner = getWinner(map);
+    if (winner) {
+      gameWon(winner);
+    } else {
+      checkTieState();
+    }
+  }, [map]);
 
   const onPress = (rowIndex, columnIndex) => {
     if (map[rowIndex][columnIndex] !== "") {
@@ -35,25 +52,20 @@ export default function App() {
     });
 
     setCurrentTurn(currentTurn === "x" ? "o" : "x");
-    const winner = getWinner();
-    if (winner) {
-      gameWon(winner);
-    } else {
-      checkTieState();
-    }
+  
   };
 
-  const getWinner = () => {
+  const getWinner = (winnerMap) => {
     //Check rows
     for (let i = 0; i < 3; i++) {
-      const isRowXWinning = map[i].every((cell) => cell === "x");
-      const isRowOWinning = map[i].every((cell) => cell === "o");
+      const isRowXWinning = winnerMap[i].every((cell) => cell === "x");
+      const isRowOWinning = winnerMap[i].every((cell) => cell === "o");
 
       if (isRowXWinning) {
         return "x";
       }
       if (isRowOWinning) {
-        return "0";
+        return "o";
       }
     }
 
@@ -63,10 +75,10 @@ export default function App() {
       let isColumnOWinner = true;
 
       for (let row = 0; row < 3; row++) {
-        if (map[row][col] !== "x") {
+        if (winnerMap[row][col] !== "x") {
           isColumnXWinner = false;
         }
-        if (map[row][col] !== "0") {
+        if (winnerMap[row][col] !== "0") {
           isColumnOWinner = false;
         }
       }
@@ -86,17 +98,17 @@ export default function App() {
     let isDiagonal2XWinning = true;
 
     for (let i = 0; i < 3; i++) {
-      if (map[i][i] !== "o") {
+      if (winnerMap[i][i] !== "o") {
         isDiagonal1OWinning = false;
       }
-      if (map[i][i] !== "x") {
+      if (winnerMap[i][i] !== "x") {
         isDiagonal1XWinning = false;
       }
 
-      if (map[i][2 - i] !== "o") {
+      if (winnerMap[i][2 - i] !== "o") {
         isDiagonal2OWinning = false;
       }
-      if (map[i][2 - i] !== "x") {
+      if (winnerMap[i][2 - i] !== "x") {
         isDiagonal2XWinning = false;
       }
     }
@@ -129,8 +141,64 @@ export default function App() {
   };
 
   const resetGame = () => {
-    setMap(emptyMap);
+    setMap([
+      ["", "", ""], // 1st row
+      ["", "", ""], // 2nd row
+      ["", "", ""], // 3rd row
+    ]);
     setCurrentTurn("x");
+  };
+
+  const botTurn = () => {
+    //collect all posible options
+    const posssiblePositions = [];
+
+    map.forEach((row, rowIndex) => {
+      row.forEach((cell, columnIndex) => {
+        if (cell === "") {
+          posssiblePositions.push({ row: rowIndex, col: columnIndex });
+        }
+      });
+    });
+
+    let chosenOption;
+
+    //Attack
+    posssiblePositions.forEach((posssiblePosition) => {
+      const mapCopy = copyArray(map);
+      mapCopy[posssiblePosition.row][posssiblePosition.col] = "o";
+      const winner = getWinner(mapCopy);
+      if (winner === "o") {
+        //Attack that position
+        chosenOption = posssiblePosition;
+      }
+    });
+
+    if (!chosenOption) {
+      //Defend
+      //Check if the opponent WINS if takes one of the possible positions
+      posssiblePositions.forEach((posssiblePosition) => {
+        const mapCopy = copyArray(map);
+        mapCopy[posssiblePosition.row][posssiblePosition.col] = "x";
+        const winner = getWinner(mapCopy);
+        if (winner === "x") {
+          //Defend that position
+          chosenOption = posssiblePosition;
+        }
+      });
+    }
+
+    //choose random
+    if (!chosenOption) {
+      chosenOption =
+        posssiblePositions[
+          Math.floor(Math.random() * posssiblePositions.length)
+        ];
+    }
+
+    if (chosenOption) {
+      onPress(chosenOption.row, chosenOption.col);
+    }
   };
 
   return (
