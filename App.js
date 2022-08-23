@@ -35,10 +35,9 @@ export default function App() {
 
     setCurrentTurn(currentTurn === "x" ? "o" : "x");
     const winner = getWinner();
-    if(winner){
-      gameWon(winner)
-    }
-    else{
+    if (winner) {
+      gameWon(winner);
+    } else {
       checkTieState();
     }
   };
@@ -136,6 +135,9 @@ export default function App() {
   return (
     <View style={styles.container}>
       <ImageBackground source={bg} style={styles.bg} resizeMode="contain">
+        <Text style={styles.currentTurnText}>
+          Current Turn: {currentTurn.toUpperCase()}
+        </Text>
         <View style={styles.map}>
           {map.map((row, rowIndex) => (
             <View key={`row-${rowIndex}`} style={styles.row}>
@@ -189,6 +191,12 @@ const styles = StyleSheet.create({
 
     paddingTop: 15,
   },
+  currentTurnText: {
+    fontSize: 24,
+    color: "white",
+    position: "absolute",
+    top: 50,
+  },
   map: {
     width: "80%",
     aspectRatio: 1,
@@ -216,7 +224,6 @@ const styles = StyleSheet.create({
   cross: {
     flex: 1,
   },
-
   crossLine: {
     position: "absolute",
     left: "48%",
