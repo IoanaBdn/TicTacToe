@@ -10,12 +10,14 @@ import {
 } from "react-native";
 import bg from "./assets/bg.jpeg";
 
+const emptyMap = [
+  ["", "", ""], // 1st row
+  ["", "", ""], // 2nd row
+  ["", "", ""], // 3rd row
+];
+
 export default function App() {
-  const [map, setMap] = useState([
-    ["", "", ""], //1st row
-    ["", "", ""], //2nd row
-    ["", "", ""], //3rd row
-  ]);
+  const [map, setMap] = useState(emptyMap);
 
   const [currentTurn, setCurrentTurn] = useState("x");
 
@@ -42,10 +44,10 @@ export default function App() {
       const isRowOWinning = map[i].every((cell) => cell === "o");
 
       if (isRowXWinning) {
-        Alert.alert(`X won. Row: ${i}`);
+        gameWon('x');
       }
       if (isRowOWinning) {
-        Alert.alert(`O won. Row: ${i}`);
+        gameWon('0');
       }
     }
 
@@ -64,11 +66,10 @@ export default function App() {
       }
 
       if (isColumnXWinner) {
-        Alert.alert(`X won. Col: ${col}`);
+        gameWon('x');
       }
       if (isColumnOWinner) {
-        Alert.alert(`O won. Col: ${col}`);
-
+        gameWon('o');
       }
     }
 
@@ -95,21 +96,30 @@ export default function App() {
       }
 
     }
-    if (isDiagonal1OWinning) {
-      Alert.alert(`O won. Diagonal 1`);
-    }
-    if (isDiagonal1XWinning) {
-      Alert.alert(`X won. Diagonal 1`);
-    }
+    if (isDiagonal1OWinning || isDiagonal2OWinning) {
+      gameWon('0');
 
-    if (isDiagonal2OWinning) {
-      Alert.alert(`O won. Diagonal 2`);
     }
-    if (isDiagonal2XWinning) {
-      Alert.alert(`X won. Diagonal 2`);
+    if (isDiagonal1XWinning || isDiagonal2XWinning) {
+      gameWon('x');
     }
 
   };
+
+
+  const gameWon = (player) => {
+    Alert.alert(`Huraaaayyy`, `Player ${player} won`, [
+      {
+        text: "Restart",
+        onPress: resetGame,
+      },
+    ]);
+  };
+
+  const resetGame = () => {
+    setMap(emptyMap);
+    setCurrentTurn('x');
+  }
 
   return (
     <View style={styles.container}>
