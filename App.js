@@ -74,8 +74,8 @@ export default function App() {
 
     //Check diagonals
     let isDiagonal1OWinning = true;
-    let isDiagonal2OWinning = true;
     let isDiagonal1XWinning = true;
+    let isDiagonal2OWinning = true;
     let isDiagonal2XWinning = true;
 
     
@@ -94,22 +94,21 @@ export default function App() {
         isDiagonal2XWinning=false;
       }
 
-      if (isDiagonal1OWinning) {
-        Alert.alert(`O won. Diagonal 1`);
-      }
-      if (isDiagonal2XWinning) {
-        Alert.alert(`X won. Diagonal 1`);
-      }
-
-      if (isDiagonal2OWinning) {
-        Alert.alert(`O won. Diagonal 2`);
-      }
-      if (isDiagonal2XWinning) {
-        Alert.alert(`X won. Diagonal 2`);
-      }
-
-
     }
+    if (isDiagonal1OWinning) {
+      Alert.alert(`O won. Diagonal 1`);
+    }
+    if (isDiagonal1XWinning) {
+      Alert.alert(`X won. Diagonal 1`);
+    }
+
+    if (isDiagonal2OWinning) {
+      Alert.alert(`O won. Diagonal 2`);
+    }
+    if (isDiagonal2XWinning) {
+      Alert.alert(`X won. Diagonal 2`);
+    }
+
   };
 
   return (
