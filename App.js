@@ -22,13 +22,13 @@ export default function App() {
 
   const [currentTurn, setCurrentTurn] = useState("x");
 
+  const [gameMode, setGameMode] = useState("BOT_MEDIUM"); // LOCAL, BOT_EASY, BOT_MEDIUM;
+
   useEffect(() => {
-    if (currentTurn === "o") {
+    if (currentTurn === "o" && gameMode !== "LOCAL") {
       botTurn();
     }
-  }, [currentTurn]);
-
-
+  }, [currentTurn, gameMode]);
 
   useEffect(() => {
     const winner = getWinner(map);
@@ -52,7 +52,6 @@ export default function App() {
     });
 
     setCurrentTurn(currentTurn === "x" ? "o" : "x");
-  
   };
 
   const getWinner = (winnerMap) => {
@@ -163,29 +162,31 @@ export default function App() {
 
     let chosenOption;
 
-    //Attack
-    posssiblePositions.forEach((posssiblePosition) => {
-      const mapCopy = copyArray(map);
-      mapCopy[posssiblePosition.row][posssiblePosition.col] = "o";
-      const winner = getWinner(mapCopy);
-      if (winner === "o") {
-        //Attack that position
-        chosenOption = posssiblePosition;
-      }
-    });
-
-    if (!chosenOption) {
-      //Defend
-      //Check if the opponent WINS if takes one of the possible positions
+    if (gameMode === "BOT_MEDIUM") {
+      //Attack
       posssiblePositions.forEach((posssiblePosition) => {
         const mapCopy = copyArray(map);
-        mapCopy[posssiblePosition.row][posssiblePosition.col] = "x";
+        mapCopy[posssiblePosition.row][posssiblePosition.col] = "o";
         const winner = getWinner(mapCopy);
-        if (winner === "x") {
-          //Defend that position
+        if (winner === "o") {
+          //Attack that position
           chosenOption = posssiblePosition;
         }
       });
+
+      if (!chosenOption) {
+        //Defend
+        //Check if the opponent WINS if takes one of the possible positions
+        posssiblePositions.forEach((posssiblePosition) => {
+          const mapCopy = copyArray(map);
+          mapCopy[posssiblePosition.row][posssiblePosition.col] = "x";
+          const winner = getWinner(mapCopy);
+          if (winner === "x") {
+            //Defend that position
+            chosenOption = posssiblePosition;
+          }
+        });
+      }
     }
 
     //choose random
@@ -219,6 +220,42 @@ export default function App() {
               ))}
             </View>
           ))}
+        </View>
+
+        <View style={styles.buttons}>
+          <Text
+            onPress={() => setGameMode("LOCAL")}
+            style={[
+              styles.button,
+              { backgroundColor: gameMode === "LOCAL" ? "#4F5686" : "#191F24" },
+            ]}
+          >
+            Local
+          </Text>
+          <Text
+            onPress={() => setGameMode("BOT_EASY")}
+            style={[
+              styles.button,
+              {
+                backgroundColor:
+                  gameMode === "BOT_EASY" ? "#4F5686" : "#191F24",
+              },
+            ]}
+          >
+            Easy Bot
+          </Text>
+          <Text
+            onPress={() => setGameMode("BOT_MEDIUM")}
+            style={[
+              styles.button,
+              {
+                backgroundColor:
+                  gameMode === "BOT_MEDIUM" ? "#4F5686" : "#191F24",
+              },
+            ]}
+          >
+            Medium Bot
+          </Text>
         </View>
       </ImageBackground>
       <StatusBar style="auto" />
